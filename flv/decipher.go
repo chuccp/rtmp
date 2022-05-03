@@ -13,7 +13,7 @@ type Decipher struct {
 	start bool
 	signature []byte
 }
-func (d *Decipher)signatureMatch()(bool,error){
+func (d *Decipher) Match()(bool,error){
 	var err error
 	d.signature,err = d.reader.ReadBytes(3)
 	if err!=nil{
@@ -28,7 +28,7 @@ func (d *Decipher)signatureMatch()(bool,error){
 
 func (d *Decipher) ReadHeader() (*Header,error) {
 	if d.signature==nil{
-		_,err:=d.signatureMatch()
+		_,err:=d.Match()
 		if err!=nil{
 			return nil, err
 		}

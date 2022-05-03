@@ -5,7 +5,6 @@ import (
 	"github.com/chuccp/utils/log"
 	"testing"
 )
-
 func TestDecipher(t *testing.T) {
 
 	d, err := Open("C:\\Users\\cooge\\Videos\\123321.flv")

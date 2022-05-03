@@ -4,7 +4,8 @@ type VideoPacket struct {
 }
 
 type VideoInfo struct {
-
-	avCodeId AVCodeId
+	AvCodeId AVCodeId
+	Height   uint32
+	Width    uint32
 
 }
