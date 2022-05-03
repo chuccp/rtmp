@@ -1,16 +1,18 @@
 package main
 
-import "github.com/chuccp/rtmp/flv"
+import "github.com/chuccp/rtmp/media"
 
 func main() {
 
-	//dv,err:=flv.Open("C:\\Users\\cooge\\Videos\\123321.flv")
-	//if err==nil{
-	//
-	//
-	//
-	//}
+	inputVideo, err := media.OpenVideo("C:\\Users\\cooge\\Videos\\123321.h264")
+	if err != nil {
+		return
+	}
+	videoInfo := inputVideo.ReadVideoInfo()
+	if videoInfo!=nil{
 
-	v:=flv.AmfType(0x2)
-	println(v.Size())
+
+	}
+
+
 }

@@ -55,6 +55,19 @@ func (t AmfType)ReadValue(readStream *io.ReadStream)([]byte,error){
 		}
 		return bytes, err
 	}
+	if t==String{
+		bytes, err := readStream.ReadBytes(t.Size())
+		if err != nil {
+			return nil, err
+		}
+		num:=util.BigEndian(bytes)
+		uintBytes, err := readStream.ReadUintBytes(num)
+		if err != nil {
+			return nil, err
+		}else{
+			return uintBytes, nil
+		}
+	}
 	return nil, nil
 }
 
@@ -132,12 +145,8 @@ func (a *Amf) ReadParams() error{
 			return err
 		}
 		type_ :=AmfType(readByte)
-
-		num:=type_.Size()
-
-		log.Info(type_," " ,num)
-
-		readBytes, err := a.readStream.ReadBytes(num)
+		log.Info("key:",string(bytes))
+		readBytes, err :=type_.ReadValue(a.readStream)
 		if err != nil {
 			return err
 		}

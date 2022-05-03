@@ -2,6 +2,7 @@ package flv
 
 import (
 	"fmt"
+	"github.com/chuccp/utils/log"
 	"testing"
 )
 
@@ -11,9 +12,8 @@ func TestDecipher(t *testing.T) {
 	if err != nil {
 		return
 	}else{
-		header,err:=d.ReadHeader()
+		header, err :=d.ReadHeader()
 		if err==nil{
-			t.Log(fmt.Printf("signature %x",header.signature))
 			t.Log(fmt.Printf("version %x",header.version))
 			t.Log(header.HasAudio())
 			t.Log(header.HasVideo())
@@ -30,6 +30,7 @@ func TestDecipher(t *testing.T) {
 
 							script, err := ParseScript(tag)
 							if err != nil {
+								t.Log(err)
 								return
 							}else{
 								amf:=script.Amf()
@@ -38,6 +39,14 @@ func TestDecipher(t *testing.T) {
 						}else
 						if tag.IsVideo(){
 							t.Log("===","video")
+
+							v,err:=ParseVideo(tag)
+							if err!=nil{
+								t.Log(err)
+								return
+							}
+							log.Info(v.FrameType," ",v.CodecID)
+
 						}else
 						if tag.IsAudio(){
 							t.Log("===","audio")
