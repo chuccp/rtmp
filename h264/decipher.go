@@ -9,7 +9,7 @@ import (
 )
 
 type Decipher struct {
-	reader *io.ReadStream
+	reader   *io.ReadStream
 	hasMatch bool
 }
 
@@ -22,42 +22,63 @@ func Open(path string) (*Decipher, error) {
 	if err != nil {
 		return nil, err
 	} else {
-		return &Decipher{reader:io.NewReadStream(file),hasMatch:false}, nil
+		return &Decipher{reader: io.NewReadStream(file), hasMatch: false}, nil
 	}
 }
+func (d *Decipher) Init(file *os.File)  {
+	d.reader = io.NewReadStream(file)
+	d.hasMatch = false
+}
+
 func (d *Decipher) Match() (bool, error) {
-	data,err:=d.reader.ReadBytes(3)
-	if err!=nil{
+	data, err := d.reader.ReadBytes(3)
+	if err != nil {
 		return false, err
-	}else{
-		if bytes.Equal(data,[]byte{0,0,1}){
+	} else {
+		if bytes.Equal(data, []byte{0, 0, 1}) {
 			return true, nil
-		}else if bytes.Equal(data,[]byte{0,0,0}){
-			b,err:=d.reader.ReadByte()
-			if err!=nil{
+		} else if bytes.Equal(data, []byte{0, 0, 0}) {
+			b, err := d.reader.ReadByte()
+			if err != nil {
 				return false, err
 			}
-			if b==1{
+			if b == 1 {
 				return true, nil
 			}
 		}
 	}
 	return false, error2.UnknownFormatError
 }
-func (d *Decipher) DumpInfo() *media.VideoInfo {
+func (d *Decipher) DumpInfo() (*media.VideoInfo, error) {
 
-	return nil
+	naul, err := d.ReadNAUL()
+	if err != nil {
+		return nil, err
+	}
+	if naul.IsSPS() {
+		sps, err := ParseSPS(naul)
+		if err != nil {
+			return nil, err
+		}
+		vi:=media.NewVideoInfo(media.H264)
+		width := (sps.picWidthInMbsMintus1+1)*16
+		height:=(sps.picHeightInMapUnitsMinus1+1)*16
+		vi.Width = uint32(width)
+		vi.Height = uint32(height)
+		return vi,nil
+	}
+	return nil, nil
 }
 
 func (d *Decipher) ReadNAUL() (*NAUL, error) {
-	if !d.hasMatch{
+	if !d.hasMatch {
 		d.hasMatch = true
-		flag,err:=d.Match()
-		if err!=nil{
+		flag, err := d.Match()
+		if err != nil {
 			return nil, err
 		}
-		if !flag{
-			return nil,error2.UnknownFormatError
+		if !flag {
+			return nil, error2.UnknownFormatError
 		}
 	}
 	buff := new(bytes.Buffer)

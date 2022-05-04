@@ -1,9 +1,7 @@
 package h264
 
 import (
-	"fmt"
 	"github.com/chuccp/rtmp/util"
-	"github.com/chuccp/utils/log"
 )
 
 type ProfileIdc byte
@@ -73,7 +71,6 @@ func (s *SPS) init() (*SPS, error) {
 	s.profileIdc = ProfileIdc(s.data[0])
 	s.constraintFlag = s.data[1]
 	s.levelIdc = s.data[2]
-	log.Info(fmt.Printf("%x", s.data[3:]))
 	gd := util.NewGolombDecode(s.data[3:])
 	seqParameterSetId, err := gd.ReadUGolomb()
 	if err != nil {

@@ -18,6 +18,10 @@ type NAUL struct {
 	nalUnitType   NAULType
 }
 
+func (n *NAUL)IsSPS()bool{
+	return n.nalUnitType==SPSType
+}
+
 func (n *NAUL) init() *NAUL {
 
 	n.forbiddenZero = n.header>>7 == 0

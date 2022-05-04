@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/chuccp/rtmp/h264"
 	"github.com/chuccp/rtmp/media"
-	"github.com/chuccp/utils/log"
+	"log"
 )
 
 func main() {
@@ -15,9 +15,9 @@ func main() {
 
 	info, err := inputVideo.ReadVideoInfo()
 	if err != nil {
-		return
+		log.Panicln(err)
 	}
-	log.Info(info)
+	log.Println(info.Width,"=====",info.Height)
 
 
 }

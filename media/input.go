@@ -14,10 +14,10 @@ func (v *InputVideo) ReadVideoInfo() (*VideoInfo,error) {
 	v.decipher, err = GetDecipher(v.file)
 	if err != nil {
 		return nil, err
-	}else{
-
 	}
-	return &VideoInfo{},nil
+	v.file.Seek(0,0)
+	v.decipher.Init(v.file)
+	return v.decipher.DumpInfo()
 }
 
 func OpenVideo(file string) (*InputVideo,error) {
