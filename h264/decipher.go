@@ -2,7 +2,7 @@ package h264
 
 import (
 	"bytes"
-	error2 "github.com/chuccp/rtmp/error"
+	videoError "github.com/chuccp/rtmp/error"
 	"github.com/chuccp/rtmp/media"
 	"github.com/chuccp/utils/io"
 	"os"
@@ -47,7 +47,7 @@ func (d *Decipher) Match() (bool, error) {
 			}
 		}
 	}
-	return false, error2.UnknownFormatError
+	return false, videoError.UnknownFormatError
 }
 func (d *Decipher) DumpInfo() (*media.VideoInfo, error) {
 
@@ -67,7 +67,7 @@ func (d *Decipher) DumpInfo() (*media.VideoInfo, error) {
 		vi.Height = uint32(height)
 		return vi,nil
 	}
-	return nil, nil
+	return nil, videoError.VideoFormatError
 }
 
 func (d *Decipher) ReadNAUL() (*NAUL, error) {
@@ -78,7 +78,7 @@ func (d *Decipher) ReadNAUL() (*NAUL, error) {
 			return nil, err
 		}
 		if !flag {
-			return nil, error2.UnknownFormatError
+			return nil, videoError.UnknownFormatError
 		}
 	}
 	buff := new(bytes.Buffer)

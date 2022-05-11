@@ -8,3 +8,6 @@ type IDecipher interface {
 	DumpInfo()(*VideoInfo,error)
 }
 
+type IEncoder interface {
+
+}

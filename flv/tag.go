@@ -25,6 +25,9 @@ func (t *Tag) IsVideo() bool {
 func (t *Tag) IsScript() bool {
 	return t.Type&0x12 == 0x12
 }
+
+
+
 func NewTag() *Tag {
 	return &Tag{}
 }

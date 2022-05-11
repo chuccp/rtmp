@@ -10,7 +10,6 @@ type Header struct {
 	flags byte
 	headerSize uint32
 }
-
 func (h *Header) HasAudio()bool  {
 	return h.flags&4==4
 }
