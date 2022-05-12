@@ -59,15 +59,59 @@ type SPS struct {
 
 	vuiParametersPresentFlag bool
 
+	aspectRatioInfoPresentFlag bool
+	aspectRatioIdc             uint8
+	sarWidth                   uint16
+	sarHeight                  uint16
 
+	overscanInfoPresentFlag bool
+	overscanAppropriateFlag bool
 
+	videoSignalTypePresentFlag bool
+
+	videoFormat                 uint8
+	videoFullRangeFlag          bool
+	colorDescriptionPresentFlag bool
+	colourPrimaries             uint8
+	transferCharacteristics     uint8
+	matrixCoefficients          uint8
+
+	chromaLocInfoPresentFlag       bool
+	chromaSampleLocTypeTopField    uint64
+	chromaSampleLocTypeBottomField uint64
+	timingInfoPresentFlag          bool
+	numUnitInTick                  uint32
+	timeScale                      uint32
+	fixedFrameRateFlag             bool
+
+	nalHrdParametersPresentFlag bool
+	vclHrdParametersPresentFlag bool
+
+	lowDelayHrdFlag          bool
+	picStructPresentFlag     bool
+	bitstreamRestrictionFlag bool
+
+	motionVectorsOverPicBoundariesFlag bool
+	maxBytesPerPicDenom                uint64
+	maxBitsPerMbDenom                  uint64
+	log2MaxMvLengthHorizontal          uint64
+	log2MaxMvLengthVertical            uint64
+	maxNumReorderFrames                uint64
+	maxDecFrameBuffering               uint64
 }
 
 func ParseSPS(naul *NAUL) (*SPS, error) {
+
+
+
+
+
+
 	return (&SPS{data: naul.data}).init()
 }
 
 func (s *SPS) init() (*SPS, error) {
+
 	s.profileIdc = ProfileIdc(s.data[0])
 	s.constraintFlag = s.data[1]
 	s.levelIdc = s.data[2]
@@ -178,47 +222,127 @@ func (s *SPS) init() (*SPS, error) {
 	if err != nil {
 		return nil, err
 	}
-	s.frameMbsOnlyFlag,err = gd.ReadBit()
-	if err!=nil{
+	s.frameMbsOnlyFlag, err = gd.ReadBit()
+	if err != nil {
 		return nil, err
 	}
-	if !s.frameMbsOnlyFlag{
-		s.mbAdaptiveFrameFieldFlag,err = gd.ReadBit()
-		if err!=nil{
+	if !s.frameMbsOnlyFlag {
+		s.mbAdaptiveFrameFieldFlag, err = gd.ReadBit()
+		if err != nil {
 			return nil, err
 		}
 	}
 
-	s.direct88InferenceFlag,err  = gd.ReadBit()
-	if err!=nil{
+	s.direct88InferenceFlag, err = gd.ReadBit()
+	if err != nil {
 		return nil, err
 	}
-	s.frameCroppingFlag,err =  gd.ReadBit()
-	if err!=nil{
+	s.frameCroppingFlag, err = gd.ReadBit()
+	if err != nil {
 		return nil, err
 	}
-	if s.frameCroppingFlag{
-		s.frameCropLeftOffset,err = gd.ReadUGolomb()
-		if err!=nil{
+	if s.frameCroppingFlag {
+		s.frameCropLeftOffset, err = gd.ReadUGolomb()
+		if err != nil {
 			return nil, err
 		}
-		s.frameCropRightOffset,err = gd.ReadUGolomb()
-		if err!=nil{
+		s.frameCropRightOffset, err = gd.ReadUGolomb()
+		if err != nil {
 			return nil, err
 		}
-		s.frameCropTopOffset,err = gd.ReadUGolomb()
-		if err!=nil{
+		s.frameCropTopOffset, err = gd.ReadUGolomb()
+		if err != nil {
 			return nil, err
 		}
-		s.frameCropBottomOffset,err = gd.ReadUGolomb()
-		if err!=nil{
+		s.frameCropBottomOffset, err = gd.ReadUGolomb()
+		if err != nil {
 			return nil, err
 		}
 	}
 
-	s.vuiParametersPresentFlag,err = gd.ReadBit()
-	if err!=nil{
+	s.vuiParametersPresentFlag, err = gd.ReadBit()
+	if err != nil {
 		return nil, err
+	}
+	if s.vuiParametersPresentFlag {
+		s.aspectRatioInfoPresentFlag, err = gd.ReadBit()
+
+		println("s.aspectRatioInfoPresentFlag", s.aspectRatioInfoPresentFlag)
+
+		if err != nil {
+			return nil, err
+		}
+		if s.aspectRatioInfoPresentFlag {
+			s.aspectRatioIdc, err = gd.ReadUint8()
+			if err != nil {
+				return nil, err
+			}
+		} else {
+
+			s.overscanInfoPresentFlag, err = gd.ReadBit()
+			if err != nil {
+				return nil, err
+			}
+
+			s.videoSignalTypePresentFlag, err = gd.ReadBit()
+			if err != nil {
+				return nil, err
+			}
+			if s.videoSignalTypePresentFlag {
+				s.videoFormat, err = gd.Read3Uint()
+				if err != nil {
+					return nil, err
+				}
+				s.videoFullRangeFlag, err = gd.ReadBit()
+				if err != nil {
+					return nil, err
+				}
+				s.colorDescriptionPresentFlag, err = gd.ReadBit()
+				if err != nil {
+					return nil, err
+				}
+				if s.colorDescriptionPresentFlag {
+					s.colourPrimaries, err = gd.ReadUint8()
+					if err != nil {
+						return nil, err
+					}
+					s.transferCharacteristics, err = gd.ReadUint8()
+					if err != nil {
+						return nil, err
+					}
+					s.matrixCoefficients, err = gd.ReadUint8()
+					if err != nil {
+						return nil, err
+					}
+
+				}
+			}
+			s.chromaLocInfoPresentFlag, err = gd.ReadBit()
+			if err != nil {
+				return nil, err
+			}
+			s.timingInfoPresentFlag, err = gd.ReadBit()
+			if err != nil {
+				return nil, err
+			}
+
+			if s.timingInfoPresentFlag {
+
+				s.numUnitInTick, err = gd.ReadUint32()
+				if err != nil {
+					return nil, err
+				}
+				s.timeScale, err = gd.ReadUint32()
+				if err != nil {
+					return nil, err
+				}
+				s.fixedFrameRateFlag, err = gd.ReadBit()
+				if err != nil {
+					return nil, err
+				}
+
+			}
+		}
 	}
 
 	return s, nil
@@ -267,18 +391,19 @@ func (s *SPS) NumRefFrames() uint64 {
 func (s *SPS) GapsInFrameNumValueAllowedFlag() bool {
 	return s.gapsInFrameNumValueAllowedFlag
 }
-func (s *SPS) FrameMbsOnlyFlag()bool  {
+func (s *SPS) FrameMbsOnlyFlag() bool {
 	return s.frameMbsOnlyFlag
 }
-func (s *SPS) VuiParametersPresentFlag()bool  {
+func (s *SPS) VuiParametersPresentFlag() bool {
 	return s.vuiParametersPresentFlag
 }
-func (s *SPS) Direct88InferenceFlag()bool  {
+func (s *SPS) Direct88InferenceFlag() bool {
 	return s.direct88InferenceFlag
 }
-func (s *SPS) FrameCroppingFlag()bool  {
+func (s *SPS) FrameCroppingFlag() bool {
 	return s.frameCroppingFlag
 }
+
 //frameCroppingFlag
 //direct88InferenceFlag
 //log2MaxPicOrderCntLsbMinus4

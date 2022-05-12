@@ -10,7 +10,7 @@ import (
 func main() {
 	media.Add(h264.NewDecipher())
 	media.Add(flv.NewDecipher())
-	inputVideo, err := media.OpenVideo("C:\\Users\\cao\\Videos\\123321.flv")
+	inputVideo, err := media.OpenVideo("C:\\Users\\cao\\Videos\\123321.h264")
 	if err != nil {
 		log.Panicln(err)
 		return

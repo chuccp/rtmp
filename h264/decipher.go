@@ -26,6 +26,7 @@ func Open(path string) (*Decipher, error) {
 	}
 }
 func (d *Decipher) Init(file *os.File)  {
+	file.Seek(0,0)
 	d.reader = io.NewReadStream(file)
 	d.hasMatch = false
 }
@@ -65,6 +66,7 @@ func (d *Decipher) DumpInfo() (*media.VideoInfo, error) {
 		height:=(sps.picHeightInMapUnitsMinus1+1)*16
 		vi.Width = uint32(width)
 		vi.Height = uint32(height)
+		vi.Framerate = sps.timeScale/sps.numUnitInTick/2
 		return vi,nil
 	}
 	return nil, videoError.VideoFormatError

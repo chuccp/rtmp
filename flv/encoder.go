@@ -19,14 +19,14 @@ func (e *Encoder) WriteHeaderAndZeroTag(audio bool, video bool) {
 	}
 	e.write.Write([]byte{0x46, 0x4C, 0x56, 0x01, b, 0, 0, 0, 9, 0, 0, 0, 0})
 }
-func (e *Encoder) WriteScript() {
+func (e *Encoder) WriteScript(width float64,height float64,duration float64) {
 
 	var parameters = make(Parameters)
-	parameters.Add(NumberParameter(WIDTH, 720))
-	parameters.Add(NumberParameter(DURATION, 14.415))
-	parameters.Add(NumberParameter(HEIGHT, 1280))
-	CreateAmf("onMetaData", parameters)
-
+	parameters.Add(NumberParameter(WIDTH, width))
+	parameters.Add(NumberParameter(DURATION, duration))
+	parameters.Add(NumberParameter(HEIGHT, height))
+	amf:=CreateAmf("onMetaData", parameters)
+	e.write.Write(amf.ToBytes())
 }
 
 func Create(path string) (*Encoder, error) {
