@@ -101,13 +101,10 @@ type SPS struct {
 }
 
 func ParseSPS(naul *NAUL) (*SPS, error) {
-
-
-
-
-
-
 	return (&SPS{data: naul.data}).init()
+}
+func (s *SPS) Bytes()[]byte{
+	return s.data
 }
 
 func (s *SPS) init() (*SPS, error) {
